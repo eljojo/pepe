@@ -15,7 +15,7 @@ defmodule Pepe.Event do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:event_type, :related_twitter_user_id, :related_tweet_id, :inserted_at])
-    |> validate_required([:event_type, :related_twitter_user_id, :inserted_at])
+    |> cast(params, [:event_type, :related_twitter_user_id, :related_tweet_id])
+    |> validate_required([:event_type, :related_twitter_user_id])
   end
 end
