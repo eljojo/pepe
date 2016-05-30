@@ -39,6 +39,7 @@ defmodule Pepe.Mixfile do
      {:gettext, "~> 0.11"},
      {:oauth, github: "tim/erlang-oauth"},
      {:extwitter, "~> 0.7.1"},
+     {:exrm, "~> 0.18.1"},
      {:cowboy, "~> 1.0"}]
   end
 
