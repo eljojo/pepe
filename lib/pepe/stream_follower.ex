@@ -60,6 +60,11 @@ defmodule Pepe.StreamFollower do
     }
   end
 
+  # favorited_retweet is triggered after a retweet has been favorited.
+  # luckily, a "favorite" event is also triggered, so we can safely ignore
+  # this one.
+  defp process_event("favorited_retweet", _), do: nil
+
   defp process_event(type, event) do
     Logger.debug("unhandled event " <> type <> ": " <> inspect(event))
     nil
