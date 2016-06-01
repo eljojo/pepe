@@ -2,7 +2,7 @@ defmodule Pepe.TwitterUser do
   use Pepe.Web, :model
 
   schema "twitter_users" do
-    field :twitter_user_id, :integer
+    field :screen_name, :string
     field :name, :string
     field :avatar, :string
 
@@ -14,7 +14,7 @@ defmodule Pepe.TwitterUser do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:twitter_user_id, :name, :avatar])
-    |> validate_required([:twitter_user_id, :name])
+    |> cast(params, [:screen_name, :name, :avatar])
+    |> validate_required([:screen_name, :name])
   end
 end

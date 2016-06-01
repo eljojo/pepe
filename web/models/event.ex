@@ -3,8 +3,8 @@ defmodule Pepe.Event do
 
   schema "events" do
     field :event_type, :string
-    field :related_twitter_user_id, :integer
-    field :related_tweet_id, :integer
+    field :twitter_user_id, :integer
+    field :tweet_id, :integer
     belongs_to :user, Pepe.User
 
     timestamps(updated_at: false)
@@ -15,7 +15,7 @@ defmodule Pepe.Event do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:event_type, :related_twitter_user_id, :related_tweet_id])
-    |> validate_required([:event_type, :related_twitter_user_id])
+    |> cast(params, [:event_type, :twitter_user_id, :tweet_id])
+    |> validate_required([:event_type, :twitter_user_id])
   end
 end

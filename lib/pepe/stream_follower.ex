@@ -2,12 +2,14 @@ defmodule Pepe.StreamFollower do
   require Logger
   alias Pepe.Repo
   alias Pepe.Event
+  alias Pepe.TwitterUser
 
   def stream(user) do
     setup_credentials_for_user(user)
     ExTwitter.stream_user
     |> Stream.map(&process_event/1)
-    |> Stream.filter(&(!!&1))
+    |> Stream.filter(&(!!&1)) # remove nil events
+    |> Stream.each(&insert_twitter_user/1)
     |> Stream.map(&insert_event(&1, user))
     |> Stream.run
   end
@@ -17,6 +19,17 @@ defmodule Pepe.StreamFollower do
     changeset = Event.changeset(event, params)
     Repo.insert(changeset)
   end
+
+  defp insert_twitter_user(%{twitter_user_id: id, twitter_user: changes}) do
+    case Repo.get(TwitterUser, id) do
+      nil  -> %TwitterUser{id: id}
+      twitter_user -> twitter_user
+    end
+    |> TwitterUser.changeset(changes)
+    |> Repo.insert_or_update
+  end
+
+  defp insert_twitter_user(_), do: {:error, "no user details"}
 
   defp process_event({:event, %{event: event_type} = event}) do
     process_event(event_type, event)
@@ -44,8 +57,13 @@ defmodule Pepe.StreamFollower do
     Logger.info(action <> " with id: " <> Integer.to_string(tweet.id) <> " from user with id: " <> Integer.to_string(tweet.user.id))
     %{
       event_type: action,
-      related_twitter_user_id: tweet.user.id,
-      related_tweet_id: tweet.id
+      twitter_user_id: tweet.user.id,
+      tweet_id: tweet.id,
+      twitter_user: %{
+        screen_name: tweet.user.screen_name,
+        name: tweet.user.name,
+        avatar: tweet.user.profile_image_url_https
+      }
     }
   end
 
@@ -55,8 +73,13 @@ defmodule Pepe.StreamFollower do
     Logger.info(action <> ": user id: " <> Integer.to_string(user_id) <> " favorited tweet id: " <> Integer.to_string(tweet_id))
     %{
       event_type: action,
-      related_twitter_user_id: user_id,
-      related_tweet_id: tweet_id
+      twitter_user_id: user_id,
+      tweet_id: tweet_id,
+      twitter_user: %{
+        screen_name: event.source.screen_name,
+        name: event.source.name,
+        avatar: event.source.profile_image_url_https
+      }
     }
   end
 
