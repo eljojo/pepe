@@ -23,7 +23,7 @@ defmodule Pepe.StreamFollower do
   end
 
   defp process_event({:delete, event}) do
-    Logger.debug("tweet has been deleted: " <> inspect(event))
+    Logger.warn("tweet has been deleted: " <> inspect(event))
     nil
   end
 
@@ -41,7 +41,7 @@ defmodule Pepe.StreamFollower do
   end
 
   defp process_event(action, tweet) when action == "tweet" or action == "retweet" do
-    Logger.debug(action <> " with id: " <> Integer.to_string(tweet.id) <> " from user with id: " <> Integer.to_string(tweet.user.id))
+    Logger.info(action <> " with id: " <> Integer.to_string(tweet.id) <> " from user with id: " <> Integer.to_string(tweet.user.id))
     %{
       event_type: action,
       related_twitter_user_id: tweet.user.id,
@@ -52,7 +52,7 @@ defmodule Pepe.StreamFollower do
   defp process_event(action, event) when action == "favorite" or action == "unfavorite" do
     user_id = event.source.id
     tweet_id = event.target_object.id
-    Logger.debug(action <> ": user id: " <> Integer.to_string(user_id) <> " favorited tweet id: " <> Integer.to_string(tweet_id))
+    Logger.info(action <> ": user id: " <> Integer.to_string(user_id) <> " favorited tweet id: " <> Integer.to_string(tweet_id))
     %{
       event_type: action,
       related_twitter_user_id: user_id,
@@ -66,7 +66,7 @@ defmodule Pepe.StreamFollower do
   defp process_event("favorited_retweet", _), do: nil
 
   defp process_event(type, event) do
-    Logger.debug("unhandled event " <> type <> ": " <> inspect(event))
+    Logger.warn("unhandled event " <> type <> ": " <> inspect(event))
     nil
   end
 
