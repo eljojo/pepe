@@ -84,6 +84,9 @@ defmodule Pepe.StreamFollower do
   # this one.
   defp process_event("favorited_retweet", _), do: nil
 
+  # same story here
+  defp process_event("quoted_tweet", _), do: nil
+
   defp process_event(type, event) do
     Logger.warn("unhandled event " <> type <> ": " <> inspect(event))
     nil
