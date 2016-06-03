@@ -35,6 +35,27 @@ defmodule Pepe.StreamFollower do
     process_event(event_type, event)
   end
 
+  defp process_event(%ExTwitter.Model.Tweet{} = tweet) do
+    if tweet.retweeted_status == nil do
+      process_event("tweet", tweet)
+    else
+      process_event("retweet", tweet)
+    end
+  end
+
+  defp process_event(%ExTwitter.Model.DeletedTweet{} = tweet) do
+    %{
+      event_type: "delete_tweet",
+      twitter_user_id: tweet.user_id,
+      tweet_id: tweet.id
+    }
+  end
+
+  defp process_event(other) do
+    Logger.warn("unhandled message: " <> inspect(other))
+    nil
+  end
+
   defp process_event(action, tweet) when action == "tweet" or action == "retweet" do
     Logger.info(action <> " with id: " <> Integer.to_string(tweet.id) <> " from user with id: " <> Integer.to_string(tweet.user.id))
     %{
@@ -64,27 +85,6 @@ defmodule Pepe.StreamFollower do
 
   defp process_event(type, event) do
     Logger.warn("unhandled event " <> type <> ": " <> inspect(event))
-    nil
-  end
-
-  defp process_event(%ExTwitter.Model.Tweet{} = tweet) do
-    if tweet.retweeted_status == nil do
-      process_event("tweet", tweet)
-    else
-      process_event("retweet", tweet)
-    end
-  end
-
-  defp process_event(%ExTwitter.Model.DeletedTweet{} = tweet) do
-    %{
-      event_type: "delete_tweet",
-      twitter_user_id: tweet.user_id,
-      tweet_id: tweet.id
-    }
-  end
-
-  defp process_event(other) do
-    Logger.warn("unhandled message: " <> inspect(other))
     nil
   end
 
