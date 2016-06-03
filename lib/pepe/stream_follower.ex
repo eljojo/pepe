@@ -41,11 +41,7 @@ defmodule Pepe.StreamFollower do
       event_type: action,
       twitter_user_id: tweet.user.id,
       tweet_id: tweet.id,
-      twitter_user: %{
-        screen_name: tweet.user.screen_name,
-        name: tweet.user.name,
-        avatar: tweet.user.profile_image_url_https
-      }
+      twitter_user: parse_twitter_user(tweet.user)
     }
   end
 
@@ -57,11 +53,7 @@ defmodule Pepe.StreamFollower do
       event_type: action,
       twitter_user_id: user_id,
       tweet_id: tweet_id,
-      twitter_user: %{
-        screen_name: event.source.screen_name,
-        name: event.source.name,
-        avatar: event.source.profile_image_url_https
-      }
+      twitter_user: parse_twitter_user(event.source)
     }
   end
 
@@ -83,6 +75,14 @@ defmodule Pepe.StreamFollower do
     end
   end
 
+  defp process_event(%ExTwitter.Model.DeletedTweet{} = tweet) do
+    %{
+      event_type: "delete_tweet",
+      twitter_user_id: tweet.user_id,
+      tweet_id: tweet.id
+    }
+  end
+
   defp process_event(other) do
     Logger.warn("unhandled message: " <> inspect(other))
     nil
@@ -95,5 +95,13 @@ defmodule Pepe.StreamFollower do
       access_token_secret: user.twitter_access_secret
     }
     ExTwitter.configure(:process, Map.merge(app_credentials, user_credentials))
+  end
+
+  defp parse_twitter_user(user) do
+    %{
+      screen_name: user.screen_name,
+      name: user.name,
+      avatar: user.profile_image_url_https
+    }
   end
 end
