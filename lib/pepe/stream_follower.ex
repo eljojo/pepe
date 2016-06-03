@@ -6,7 +6,7 @@ defmodule Pepe.StreamFollower do
 
   def stream(user) do
     setup_credentials_for_user(user)
-    ExTwitter.stream_user
+    ExTwitter.stream_user([receive_messages: true], :infinity)
     |> Stream.map(&process_event/1)
     |> Stream.filter(&(!!&1)) # remove nil events
     |> Stream.each(&insert_twitter_user/1)
@@ -31,26 +31,8 @@ defmodule Pepe.StreamFollower do
 
   defp insert_twitter_user(_), do: {:error, "no user details"}
 
-  defp process_event({:event, %{event: event_type} = event}) do
+  defp process_event({_, %{event: event_type} = event}) when is_bitstring(event_type) do
     process_event(event_type, event)
-  end
-
-  defp process_event({:delete, event}) do
-    Logger.warn("tweet has been deleted: " <> inspect(event))
-    nil
-  end
-
-  defp process_event(%ExTwitter.Model.Tweet{} = tweet) do
-    if tweet.retweeted_status == nil do
-      process_event("tweet", tweet)
-    else
-      process_event("retweet", tweet)
-    end
-  end
-
-  defp process_event(other) do
-    Logger.debug(inspect(other))
-    nil
   end
 
   defp process_event(action, tweet) when action == "tweet" or action == "retweet" do
@@ -90,6 +72,19 @@ defmodule Pepe.StreamFollower do
 
   defp process_event(type, event) do
     Logger.warn("unhandled event " <> type <> ": " <> inspect(event))
+    nil
+  end
+
+  defp process_event(%ExTwitter.Model.Tweet{} = tweet) do
+    if tweet.retweeted_status == nil do
+      process_event("tweet", tweet)
+    else
+      process_event("retweet", tweet)
+    end
+  end
+
+  defp process_event(other) do
+    Logger.warn("unhandled message: " <> inspect(other))
     nil
   end
 
