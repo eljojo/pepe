@@ -58,7 +58,7 @@ defmodule Pepe.StreamFollower do
   end
 
   defp process_event(action, tweet) when action == "tweet" or action == "retweet" do
-    Logger.info(action <> " with id: " <> Integer.to_string(tweet.id) <> " from user with id: " <> Integer.to_string(tweet.user.id))
+    Logger.info(action <> " with id: " <> Integer.to_string(tweet.id) <> " from user: @" <> tweet.user.screen_name <> " (id: " <> Integer.to_string(tweet.user.id) <> ")")
     %{
       event_type: action,
       twitter_user_id: tweet.user.id,
@@ -70,7 +70,7 @@ defmodule Pepe.StreamFollower do
   defp process_event(action, event) when action == "favorite" or action == "unfavorite" do
     user_id = event.source.id
     tweet_id = event.target_object.id
-    Logger.info(action <> ": user id: " <> Integer.to_string(user_id) <> " favorited tweet id: " <> Integer.to_string(tweet_id))
+    Logger.info(action <> ": user @" <> event.source.screen_name <> " (id: " <> Integer.to_string(user_id) <> ") favorited tweet id: " <> Integer.to_string(tweet_id))
     %{
       event_type: action,
       twitter_user_id: user_id,
