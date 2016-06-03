@@ -43,7 +43,7 @@ defmodule Pepe.StreamFollower do
     end
   end
 
-  defp process_event(%ExTwitter.Model.DeletedTweet{} = tweet) do
+  defp process_event(%ExTwitter.Model.DeletedTweet{status: tweet}) do
     Logger.info("deleted tweet with id: " <> Integer.to_string(tweet.id) <> " from user with id: " <> Integer.to_string(tweet.user_id))
     %{
       event_type: "delete_tweet",
