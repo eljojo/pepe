@@ -14,6 +14,7 @@ defmodule Pepe do
       supervisor(Pepe.Endpoint, []),
       # Start your own worker by calling: Pepe.Worker.start_link(arg1, arg2, arg3)
       # worker(Pepe.Worker, [arg1, arg2, arg3]),
+      supervisor(Pepe.Supervisor.StreamFollower, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
