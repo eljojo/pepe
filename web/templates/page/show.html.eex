@@ -1,6 +1,6 @@
 <% count_sum = sum_counts(@tweet_counts) %>
 <%= for tweet_count <- @tweet_counts do %>
   <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}" do
-    tweet_count_image(tweet_count, count_sum)
+    tweet_count_image(tweet_count, @tweet_counts)
   end %>
 <% end %>
