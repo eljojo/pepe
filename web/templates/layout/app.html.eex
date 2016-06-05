@@ -19,7 +19,7 @@
             <li><a href="http://github.com/eljojo/pepe">Source Code</a></li>
           </ul>
         </nav>
-        <span class="logo"></span>
+        <h1 class="logo">Pepe: twitter stats</h1>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>

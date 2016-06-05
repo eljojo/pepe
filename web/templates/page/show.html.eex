@@ -1,6 +1,8 @@
-<% count_sum = sum_counts(@tweet_counts) %>
-<%= for tweet_count <- @tweet_counts do %>
-  <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}" do
+<h2>Users in my timeline proportional to how much they tweet</h2>
+<%= for tweet_count <- @tweet_counts do %> <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}" do
     tweet_count_image(tweet_count, @tweet_counts)
   end %>
 <% end %>
+
+
+<blockquote>Note: Users that tweet too much or too little might be out of proportion, for display reasons</blockquote>
