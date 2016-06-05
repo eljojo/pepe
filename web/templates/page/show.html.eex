@@ -1,5 +1,5 @@
 <h2>Users in my timeline proportional to how much they tweet</h2>
-<%= for tweet_count <- @tweet_counts do %> <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}" do
+<%= for tweet_count <- @tweet_counts do %> <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}", target: "_blank" do
     tweet_count_image(tweet_count, @tweet_counts)
   end %>
 <% end %>

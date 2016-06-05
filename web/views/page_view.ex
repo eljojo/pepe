@@ -13,8 +13,7 @@ defmodule Pepe.PageView do
     options = [
       src: twitter_user.avatar,
       title: "@#{twitter_user.screen_name}: #{Float.round(percentage * 100, 2)}%",
-      style: "width: #{display_size}px; height: #{display_size}px",
-      target: "_blank"
+      style: "width: #{display_size}px; height: #{display_size}px"
     ]
     content_tag(:img, "", options)
   end
