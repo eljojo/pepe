@@ -9,7 +9,7 @@ defmodule Pepe.Supervisor.StreamFollower do
     Supervisor.start_link(__MODULE__, [])
   end
 
-  def init(client_name) do
+  def init(_) do
     # This is probably a huge hack
     children = Enum.map(Repo.all(User), fn user ->
       function = fn -> StreamFollower.stream(user) end

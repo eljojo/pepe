@@ -1,1 +1,1 @@
-PORT=4001 MIX_ENV=prod iex -S mix # phoenix.server
+PORT=3001 MIX_ENV=prod iex -S mix phoenix.server
