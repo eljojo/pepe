@@ -67,6 +67,16 @@ defmodule Pepe.StreamFollower do
     }
   end
 
+  defp process_event("unfollow", event) do
+    user = event.target
+    Logger.info("unfollow: user @" <> user.screen_name <> " (id: " <> Integer.to_string(user.id) <> ")")
+    %{
+      event_type: "unfollow",
+      twitter_user_id: user.id,
+      twitter_user: parse_twitter_user(user)
+    }
+  end
+
   defp process_event(action, event) when action == "favorite" or action == "unfavorite" do
     user_id = event.source.id
     tweet_id = event.target_object.id
