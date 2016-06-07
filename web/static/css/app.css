@@ -3,4 +3,5 @@ img {
   max-width: 24%;
   height: auto !important;
   min-width: 0.5%;
+  display: inline-block;
 }
