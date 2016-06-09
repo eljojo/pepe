@@ -11,6 +11,7 @@ defmodule Pepe.PageController do
     user = Repo.get(User, user_id)
     tweet_counts = Event
                     |> Event.for_user(user)
+                    |> Event.only_following_twitter_users
                     |> Event.tweet_count_by_twitter_user
                     |> Repo.all
     render conn, "show.html", tweet_counts: tweet_counts

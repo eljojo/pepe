@@ -28,6 +28,13 @@ defmodule Pepe.Event do
       order_by: [desc: :count]
   end
 
+  def only_following_twitter_users(query) do
+    from e in query,
+      join: fw in Pepe.Following,
+      on: e.twitter_user_id == fw.twitter_user_id and e.user_id == fw.user_id,
+      where: fw.following == true
+  end
+
   def for_user(query, %Pepe.User{id: id}) do
     for_user(query, id)
   end
