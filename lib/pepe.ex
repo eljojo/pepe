@@ -14,8 +14,11 @@ defmodule Pepe do
       supervisor(Pepe.Endpoint, []),
       # Start your own worker by calling: Pepe.Worker.start_link(arg1, arg2, arg3)
       # worker(Pepe.Worker, [arg1, arg2, arg3]),
-      supervisor(Pepe.Supervisor.StreamFollower, []),
     ]
+
+    if Mix.env == :prod do
+      children = children ++ [supervisor(Pepe.Supervisor.StreamFollower, [])]
+    end
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
