@@ -3,22 +3,26 @@ defmodule Pepe.StreamFollower do
   alias Pepe.Repo
   alias Pepe.Event
   alias Pepe.TwitterUser
+  alias Pepe.Following
+  alias Pepe.User
 
   def stream(user) do
     setup_credentials_for_user(user)
     ExTwitter.stream_user([receive_messages: true], :infinity)
     |> Stream.map(&process_event/1)
-    |> Stream.filter(&(!!&1)) # remove nil events
     |> Stream.each(&insert_twitter_user/1)
-    |> Stream.map(&insert_event(&1, user))
+    |> Stream.each(&update_followings(&1, user))
+    |> Stream.each(&insert_event(&1, user))
     |> Stream.run
   end
 
-  defp insert_event(params, user) do
+  defp insert_event(%{event_type: _} = params, user) do
     event = Ecto.build_assoc(user, :events)
     changeset = Event.changeset(event, params)
     Repo.insert(changeset)
   end
+
+  defp insert_event(_, _), do: nil
 
   defp insert_twitter_user(%{twitter_user_id: id, twitter_user: changes}) do
     case Repo.get(TwitterUser, id) do
@@ -30,6 +34,46 @@ defmodule Pepe.StreamFollower do
   end
 
   defp insert_twitter_user(_), do: {:error, "no user details"}
+
+  defp update_followings(%{friends: friends}, user) do
+    query = Following.twitter_user_ids_for_user(user) |> Following.where_following(true)
+    existing_followings = query |> Repo.all
+
+    new_follows = friends -- existing_followings
+    Logger.info("new follows: " <> inspect(new_follows))
+    insert_followings(new_follows, true, user)
+
+    unfollows = existing_followings -- friends
+    Logger.info("unfollows: " <> inspect(unfollows))
+    insert_followings(unfollows, false, user)
+  end
+
+  defp update_followings(%{twitter_user_id: tw_id}, %User{twitter_user_id: tw_id}) do
+    nil
+  end
+  defp update_followings(%{event_type: "follow", twitter_user_id: friend}, user) do
+    insert_following(friend, true, user)
+  end
+  defp update_followings(%{event_type: "unfollow", twitter_user_id: friend}, user) do
+    insert_following(friend, false, user)
+  end
+  defp update_followings(_, _), do: nil
+
+  defp insert_followings([friend | rest], is_following, user) do
+    insert_following(friend, is_following, user)
+    insert_followings(rest, is_following, user)
+  end
+  defp insert_followings([], _, _), do: nil
+
+  defp insert_following(friend, is_following, user) do
+    query = Following.for_user(user) |> Following.for_twitter_user(friend)
+    case Repo.one(query) do
+      nil  -> %Following{user_id: user.id, twitter_user_id: friend}
+      following -> following
+    end
+    |> Following.changeset(%{following: is_following})
+    |> Repo.insert_or_update
+  end
 
   defp process_event({_, %{event: event_type} = event}) when is_bitstring(event_type) do
     process_event(event_type, event)
@@ -52,9 +96,12 @@ defmodule Pepe.StreamFollower do
     }
   end
 
+  defp process_event({:friends, %{friends: friends}}) do
+    %{friends: friends}
+  end
+
   defp process_event(other) do
     Logger.warn("unhandled message: " <> inspect(other))
-    nil
   end
 
   defp process_event(action, tweet) when action == "tweet" or action == "retweet" do
@@ -67,11 +114,11 @@ defmodule Pepe.StreamFollower do
     }
   end
 
-  defp process_event("unfollow", event) do
+  defp process_event(type, event) when type == "follow" or type == "unfollow"  do
     user = event.target
-    Logger.info("unfollow: user @" <> user.screen_name <> " (id: " <> Integer.to_string(user.id) <> ")")
+    Logger.info(type <> ": user @" <> user.screen_name <> " (id: " <> Integer.to_string(user.id) <> ")")
     %{
-      event_type: "unfollow",
+      event_type: type,
       twitter_user_id: user.id,
       twitter_user: parse_twitter_user(user)
     }
@@ -98,7 +145,6 @@ defmodule Pepe.StreamFollower do
 
   defp process_event(type, event) do
     Logger.warn("unhandled event " <> type <> ": " <> inspect(event))
-    nil
   end
 
   defp setup_credentials_for_user(user) do

@@ -6,6 +6,7 @@ defmodule Pepe.User do
     field :twitter_access_token, :string
     field :twitter_access_secret, :string
     has_many :events, Pepe.Event
+    has_many :followings, Pepe.Following
 
     timestamps
   end
