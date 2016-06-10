@@ -24,9 +24,6 @@ erl_crash.dump
 /config/dev.secret.exs
 /config/prod.secret.exs
 
-/inventory
-/playbooks
-
 # edeliver
 .deliver/
 script/deploy
