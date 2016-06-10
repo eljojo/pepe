@@ -29,3 +29,4 @@ erl_crash.dump
 
 # edeliver
 .deliver/
+script/deploy
