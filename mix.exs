@@ -19,7 +19,7 @@ defmodule Pepe.Mixfile do
   def application do
     [mod: {Pepe, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :extwitter]]
+                    :phoenix_ecto, :postgrex, :extwitter, :edeliver]]
   end
 
   # Specifies which paths to compile per environment.
@@ -40,6 +40,7 @@ defmodule Pepe.Mixfile do
      {:oauth, github: "tim/erlang-oauth"},
      {:extwitter, "~> 0.7.1"},
      {:exrm, "~> 0.18.1"},
+     {:edeliver, ">= 1.2.9"},
      {:cowboy, "~> 1.0"}]
   end
 
