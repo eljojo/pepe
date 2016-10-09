@@ -1,9 +1,5 @@
 use Mix.Config
 
-
-
-use Mix.Config
-
 config :pepe, Pepe.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
