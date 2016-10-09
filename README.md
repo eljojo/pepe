@@ -31,4 +31,6 @@ dokku config:set pepe LC_ALL=en_US.utf8
 dokku config:set pepe SECRET_KEY_BASE="YOUR_SECRET_KEY_BASE"
 dokku config:set pepe TWITTER_CONSUMER_KEY="REPLACE_ME" TWITTER_CONSUMER_SECRET="REPLACE_ME"
 dokku config:set pepe HOSTNAME=your.host.name
+
+dokku checks:disable pepe # so we don't record twice
 ```
