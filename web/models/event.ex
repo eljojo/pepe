@@ -21,7 +21,7 @@ defmodule Pepe.Event do
 
   def tweet_count_by_twitter_user(query) do
     from e in query,
-      join: tw in Pepe.TwitterUser, on: e.twitter_user_id == tw.id,
+      left_join: tw in Pepe.TwitterUser, on: e.twitter_user_id == tw.id,
       select: %{count: count(tw.id), twitter_user: tw},
       where: e.event_type == "tweet" or e.event_type == "retweet",
       group_by: tw.id,

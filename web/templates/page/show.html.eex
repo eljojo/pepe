@@ -1,9 +1,31 @@
 <h2>Users in my timeline proportional to how much they tweet</h2>
 <% tweet_sum = sum_counts(@tweet_counts) %>
 <% length_tweet_counts = length(@tweet_counts) %>
-<%= for tweet_count <- @tweet_counts do %> <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}", target: "_blank" do
-    tweet_count_image(tweet_count, length_tweet_counts, tweet_sum)
+<%= if @mode == :list do %>
+  <table>
+    <tr>
+      <th>name</th>
+      <th>user</th>
+      <th>tweets</th>
+    </tr>
+    <%= for tweet_count <- @tweet_counts do %> 
+      <tr>
+        <td><%= tweet_count.twitter_user.name %></td>
+        <td>
+          <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}", target: "_blank" do %>
+            @<%= tweet_count.twitter_user.screen_name %>
+          <% end %>
+        </td>
+        <td>
+          <%= tweet_count.count %> (<%= 100 * tweet_count.count / tweet_sum |> Float.round(2) %>%)
+          </td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <%= for tweet_count <- @tweet_counts do %> <%= link to: "https://twitter.com/#{tweet_count.twitter_user.screen_name}", target: "_blank" do
+      tweet_count_image(tweet_count, length_tweet_counts, tweet_sum)
   end %> <% end %>
-
+<% end %>
 
 <blockquote>Note: Users that tweet too much or too little might be out of proportion, for display reasons</blockquote>
