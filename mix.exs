@@ -30,15 +30,15 @@ defmodule Pepe.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.2.0-rc"},
-     {:phoenix_pubsub, "~> 1.0.0-rc"},
-     {:phoenix_ecto, "~> 3.0-rc"},
+    [{:phoenix, "~> 1.2.0"},
+     {:phoenix_pubsub, "~> 1.0.0"},
+     {:phoenix_ecto, "~> 3.0"},
      {:postgrex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.5"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:oauth, github: "tim/erlang-oauth"},
-     {:extwitter, "~> 0.7.1"},
+     {:extwitter, "~> 0.8.3"},
      {:exrm, "~> 0.18.1"},
      {:edeliver, ">= 1.2.9"},
      {:cowboy, "~> 1.0"}]
