@@ -26,7 +26,6 @@ dokku apps:create pepe
 dokku postgres:create pepe_postgres
 dokku postgres:import pepe_postgres < pepe_db_backup
 dokku postgres:link pepe_postgres pepe
-dokku config:set pepe BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 dokku config:set pepe LC_ALL=en_US.utf8
 dokku config:set pepe SECRET_KEY_BASE="YOUR_SECRET_KEY_BASE"
 dokku config:set pepe TWITTER_CONSUMER_KEY="REPLACE_ME" TWITTER_CONSUMER_SECRET="REPLACE_ME"
